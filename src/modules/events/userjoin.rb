@@ -5,8 +5,7 @@ module Bot::DiscordEvents
     member_join do |_event|
       welcome = ['Leave your weapons at the door.', 'We just ran out of coffee.',
                  "You'll have to be better than that to not be spotted.", 'Trust the cloak.']
-      msg = welcome[rand(welcome.length - 1)]
-      '{#event.user.mention} has joined. {#msg}'
+      '{#event.user.mention} has joined. ' + welcome[rand(welcome.length - 1)]
     end
   end
 end
