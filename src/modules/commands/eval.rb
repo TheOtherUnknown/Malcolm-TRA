@@ -8,7 +8,7 @@ module Bot::DiscordCommands
       break unless event.user.id == Bot::CONFIG.owner
       begin
         eval code.join(' ')
-      rescue => e
+      rescue StandardError => e
         "An error occurred 😞 ```#{e}```"
       end
     end
