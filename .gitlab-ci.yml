@@ -1,0 +1,5 @@
+before_script: 
+-  gem install rubocop
+test: 
+  script:
+  -  rubocop --fail-level W src/modules/commands src/modules/events
