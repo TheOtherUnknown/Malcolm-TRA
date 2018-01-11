@@ -13,7 +13,7 @@ module Bot::DiscordCommands
         end
         event.channel.prune(ammount) if ammount >= 2
         nil
-   end
+      end
     end
   end
 end
