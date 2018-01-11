@@ -5,7 +5,6 @@ This is a template for a modular [Discord](https://discordapp.com/) chat bot usi
 This template has several objectives:
 
 - Provide a modular bot template for novice users that is easy to build on and extend
-- A structure that is YARDoc friendly so you can generate awesome docs for your bot right away for your users
 - Rubocop friendly
 - Implements [bundler](http://bundler.io/) for managing your gems
 
@@ -27,27 +26,6 @@ Make a copy of [config-template.yaml](https://github.com/z64/gemstone/blob/maste
 Fill out each field provided to set up a minimal discord bot, with a few commands and an event to get you started.
 
 To run your bot, open your terminal and run `rake` in the top level folder of your bot. You're free to make something like a bash script, or Windows batch file that will do this for you at the click of an icon. You can also do other things before running your bot this way.
-
-**For example,** here is my `run.sh` file:
-
-```bash
-while true
-do
-  echo "updating from git.."
-  git pull
-
-  echo "running rubocop.."
-  rubocop src
-
-  echo "updating documentation.."
-  yardoc src
-
-  echo "starting bot.."
-  rake
-done
-```
-
-If my bot crashes, or I run a restart command, the bot will exit and update itself as shown.
 
 ## Adding commands and events
 
