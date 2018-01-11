@@ -40,7 +40,6 @@ Start with the following structure, and fill in whatever you would like that com
 ```ruby
 module Bot::DiscordCommands
   # Document your command
-  # in some YARD comments here!
   module MyCommand
     extend Discordrb::Commands::CommandContainer
     command :my_command do |event|
@@ -60,8 +59,7 @@ Start with the following structure, and fill in whatever you would like that com
 
 ```ruby
 module Bot::DiscordEvents
-  # Document your event
-  # in some YARD comments here!
+  # Document your event 
   module MyEvent
     extend Discordrb::EventContainer
     member_join do |event|
@@ -72,18 +70,6 @@ end
 ```
 
 Save the file, and start the bot. The new event file will be detected and added into the bot automatically.
-
-## Generating docs
-
-Install YARD.
-
-`gem install yard`
-
-In the top level folder, run:
-
-`yardoc`
-
-Your docs will be generated in a new folder, `doc/`.
 
 ## Checking style with rubocop
 
