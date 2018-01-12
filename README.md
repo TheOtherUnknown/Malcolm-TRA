@@ -80,9 +80,3 @@ Install rubocop.
 In the top level folder, run:
 
 `rubocop`
-
-## Support
-
-Join us on the [Discord API server](https://discord.gg/0SBTUU1wZTWfFQL2)!
-
-You can find me on discord, I'm `z64#2639`.

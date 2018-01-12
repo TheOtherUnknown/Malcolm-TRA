@@ -6,7 +6,7 @@ module Bot::DiscordCommands
                    min_args: 1, required_permissions: [:kick_members], usage: 'kick <name>') do |event|
       mentions = event.message.mentions
       event.server.kick(mentions.first)
-      'Done' unless mentions.first.nil? 
+      'Done' unless mentions.first.nil?
     end
   end
 end
