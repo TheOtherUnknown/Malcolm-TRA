@@ -1,27 +1,20 @@
-# gemstone
+# Malcolm
 
-This is a template for a modular [Discord](https://discordapp.com/) chat bot using meew0's [discordrb](https://github.com/meew0/discordrb).
+This is a Discord bot build specifically for The Ranger's Apprentice server using meew0's [discordrb](https://github.com/meew0/discordrb).
 
-This template has several objectives:
-
-- Provide a modular bot template for novice users that is easy to build on and extend
-- Rubocop friendly
-- Implements [bundler](http://bundler.io/) for managing your gems
-
+The original gemstone template can be found on [GitHub](https://github.com/z64/gemstone).
 ## Setup
 
-1. `git clone https://github.com/z64/gemstone.git`
-1. `cd gemstone`
-1. delete the `.git` folder (`rm -rf .git`)
-1. `git init` to start a new repo for your bot
-1. `gem install bundler` and `gem install rake` if you haven't yet
-1. `rake install`
+This bot may not work for other servers. However, here are the install directions:
+1. Clone or download this repo
+2. `gem install bundler` and `gem install rake` unless you already have them
+3. `rake install` to install deps 
 
 Follow steps in the next section to configure your bot and do a first-time run.
 
 ## Configuring and running your bot
 
-Make a copy of [config-template.yaml](https://github.com/z64/gemstone/blob/master/data/config-template.yaml) and rename it to `config.yaml` *exactly*.
+Make a copy of config-template.yaml and rename it to `config.yaml` *exactly*.
 
 Fill out each field provided to set up a minimal discord bot, with a few commands and an event to get you started.
 
