@@ -3,7 +3,7 @@ module Bot::DiscordEvents
   module UserPart
     extend Discordrb::EventContainer
     member_leave do |event|
-      event.respond('\u200B' + event.username + ' has left the server.')
+      event.respond('\u200B' + event.user.display_name + ' has left the server.')
     end
   end
 end
