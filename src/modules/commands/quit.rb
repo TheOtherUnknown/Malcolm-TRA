@@ -4,7 +4,7 @@ module Bot::DiscordCommands
     extend Discordrb::Commands::CommandContainer
     command(:quit, help_available: false) do |event|
       break unless event.user.id == Bot::CONFIG.owner
-      Bot.stop
+      exit
     end
   end
 end
