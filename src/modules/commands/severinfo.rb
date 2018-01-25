@@ -2,7 +2,7 @@ module Bot::DiscordCommands
   # Return server info, including a user count on command
   module ServerInfo
     extend Discordrb::Commands::CommandContainer
-    command :serverinfo do |event|
+    command(:serverinfo, description: 'Display this server\'s basic info.', usage: 'serverinfo') do |event|
       event << '**' + event.server.name + '**'
       event << 'Owner: ' + event.server.owner.username
       event << "Users: #{event.server.member_count}"
