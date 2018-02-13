@@ -1,6 +1,5 @@
 module Bot::DiscordCommands
-  # Responds with "Pong!".
-  # This used to check if bot is alive
+  # Responds with "Pong!" and a time based on timestamps.
   module Ping
     extend Discordrb::Commands::CommandContainer
     command :ping do |_event|
