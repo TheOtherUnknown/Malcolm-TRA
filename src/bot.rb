@@ -2,7 +2,12 @@
 require 'discordrb'
 require 'ostruct'
 require 'yaml'
-
+# Patch for member bug in roles
+class Discordrb::Role
+  def members
+    @server.members.select { |m| m.role? self }
+  end
+end
 # The main bot module.
 module Bot
   # Load non-Discordrb modules
