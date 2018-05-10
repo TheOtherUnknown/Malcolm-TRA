@@ -9,4 +9,4 @@ RestartSec=30
 User= #Insert bot user here!
 
 [Install]
-WantedBy=multu-user.target
+WantedBy=multi-user.target
