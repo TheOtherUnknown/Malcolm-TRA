@@ -14,9 +14,9 @@ Follow steps in the next section to configure your bot and do a first-time run.
 
 ## Configuring and running your bot
 
-Make a copy of config-template.yaml and rename it to `config.yaml` *exactly*.
+Make a copy of `example.config.rb` and rename it to `config.rb` *exactly*.
 
-Fill out each field provided to set up a minimal discord bot, with a few commands and an event to get you started.
+Fill out each field provided to set up a Malcolm's configuration. The gaming field is optional.
 
 To run your bot, open your terminal and run `rake` in the top level folder of your bot. You're free to make something like a bash script, or Windows batch file that will do this for you at the click of an icon. You can also do other things before running your bot this way.
 
@@ -63,13 +63,3 @@ end
 ```
 
 Save the file, and start the bot. The new event file will be detected and added into the bot automatically.
-
-## Checking style with rubocop
-
-Install rubocop.
-
-`gem install rubocop`
-
-In the top level folder, run:
-
-`rubocop`
