@@ -1,7 +1,7 @@
 # Gems
 require 'discordrb'
-require 'ostruct'
-require 'yaml'
+require 'configatron'
+require_relative '../data/config.rb'
 # Patch for member bug in roles
 class Discordrb::Role
   def members
@@ -13,14 +13,11 @@ module Bot
   # Load non-Discordrb modules
   Dir['src/modules/*.rb'].each { |mod| load mod }
 
-  # Bot configuration
-  CONFIG = OpenStruct.new YAML.load_file 'data/config.yaml'
-
   # Create the bot.
   # The bot is created as a constant, so that you
   # can access the cache anywhere.
-  BOT = Discordrb::Commands::CommandBot.new(client_id: CONFIG.client_id,
-                                            token: CONFIG.token,
+  BOT = Discordrb::Commands::CommandBot.new(client_id: configatron.client_id,
+                                            token: configatron.token,
                                             prefix: ',')
   puts 'Bot invite URL: ' + BOT.invite_url + '&permissions=67119110 '
   # This class method wraps the module lazy-loading process of discordrb command

@@ -3,7 +3,7 @@ module Bot::DiscordCommands
   module Exit
     extend Discordrb::Commands::CommandContainer
     command(:quit, help_available: false) do |event|
-      break unless event.user.id == Bot::CONFIG.owner
+      break unless event.user.id == configatron.owner
       exit
     end
   end
