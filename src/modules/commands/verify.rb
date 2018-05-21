@@ -1,5 +1,3 @@
-# Create ratelimiting bucket
-BOT.bucket :wait60, delay: 60
 module Bot::DiscordCommands
   # Allow a user to verify themself after certian conditions are met
   module Verify
