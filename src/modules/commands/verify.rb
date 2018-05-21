@@ -7,7 +7,7 @@ module Bot::DiscordCommands
       if jointime.mon > Time.now.mon || Time.now.mday - jointime.mday > 3
         allroles = event.server.roles
         allroles.each do |a|
-          if CONFIG.verified.lower == a.name.lower
+          if configatron.verified.lower == a.name.lower
             event.user.on(event.server).add_role(a)
             break
           end
