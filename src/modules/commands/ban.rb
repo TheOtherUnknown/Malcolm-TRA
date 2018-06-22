@@ -5,7 +5,7 @@ module Bot::DiscordCommands
     command(:kb, description: 'Ban a user from the server.', min_args: 1, required_permissions: [:ban_members], usage: 'kb <user>') do |event|
       mentions = event.message.mentions
       event.server.ban(mentions.first)
-      'Bye bye' unless mentions.first.nil?
+      'Not a valid user!' if mentions.first.nil?
     end
   end
 end
