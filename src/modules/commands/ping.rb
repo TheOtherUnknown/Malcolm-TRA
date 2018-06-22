@@ -1,5 +1,5 @@
 module Bot::DiscordCommands
-  # Responds with "Pong!" and a time based on timestamps.
+  # Responds with "Pong!" and a time based on timestamps. Ratelimited.
   module Ping
     extend Discordrb::Commands::CommandContainer
     command :ping, bucket: :wait60 do |event|
