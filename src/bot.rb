@@ -15,7 +15,7 @@ module Bot
                                             prefix: ',')
   puts 'Bot invite URL: ' + BOT.invite_url + '&permissions=67119110 '
   # Create ratelimiting bucket
-  BOT.bucket :wait60, delay: 60
+  BOT.bucket :wait90, delay: 90
   # This class method wraps the module lazy-loading process of discordrb command
   # and event modules. Any module name passed to this method will have its child
   # constants iterated over and passed to `Discordrb::Commands::CommandBot#include!`

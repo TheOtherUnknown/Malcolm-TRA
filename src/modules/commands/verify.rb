@@ -2,7 +2,7 @@ module Bot::DiscordCommands
   # Allow a user to verify themself after certian conditions are met
   module Verify
     extend Discordrb::Commands::CommandContainer
-    command :verify, bucket: :wait60, description: 'Add yourself to the \"Verified\" role.', usage: 'verify' do |event|
+    command :verify, bucket: :wait90, description: 'Add yourself to the \"Verified\" role.', usage: 'verify' do |event|
       jointime = event.user.on(event.server).joined_at
       if jointime.mon > Time.now.mon || Time.now.mday - jointime.mday > 3 || jointime.year < Time.now.year
         allroles = event.server.roles
