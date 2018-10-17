@@ -2,31 +2,24 @@ module Bot::DiscordCommands
   # Document your command
   module UserInfo
     extend Discordrb::Commands::CommandContainer
-    command :userinfo, description: 'Shows basic user information', usage: 'userinfo <user>' do |event|
-      if event.message.mentions.empty?
-        event << "**#{event.user.name}**"
-        event << "Joined on #{event.user.on(event.server).joined_at}"
-        roles = ''
-        event.user.on(event.server).roles.each do |x|
-          roles = x.name + ', '
-        end
-        event << "Member of #{roles}"
-        event << 'User is the server owner' if event.user.on(event.server).owner?
-        event << 'This user is a bot' if event.user.current_bot?
-        event << "User ID: #{event.user.id}"
-      else
-        mentioned = event.message.mentions.first
-        event << "**#{mentioned.name}**"
-        event << "Joined on #{event.user.on(event.server).joined_at}"
-        roles = ''
-        mentioned.on(event.server).roles.each do |x|
-          roles = x.name + ', '
-        end
-        event << "Member of #{roles}"
-        event << 'User is the server owner' if mentioned.on(event.server).owner?
-        event << 'This user is a bot' if mentioned.current_bot?
-        event << "User ID: #{mentioned.id}"
+    include Bot
+    command :userinfo, description: 'Shows basic user information', usage: 'userinfo <user or ID>' do |event, uid|
+      mentioned = event.user
+      if event.message.mentions.empty? && !uid.nil?
+        mentioned = BOT.user(uid.to_i).on(event.server)
+      elsif !event.message.mentions.empty?
+        mentioned = event.message.mentions.first.on(event.server)
       end
+      event << "**#{mentioned.name}**"
+      event << "Joined on #{mentioned.joined_at}"
+      roles = ''
+      mentioned.roles.each do |x|
+        roles = x.name + ', '
+      end
+      event << "Member of #{roles}"
+      event << 'User is the server owner' if mentioned.owner?
+      event << 'This user is a bot' if mentioned.current_bot?
+      event << "User ID: #{mentioned.id}"
     end
   end
 end
