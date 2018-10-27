@@ -1,6 +1,3 @@
-image: ruby:latest
-before_script: 
--  gem install rubocop
-test: 
-  script:
-  -  rubocop --fail-level W src
+language: ruby
+install: gem install rubocop
+script: rubocop --fail-level W src
