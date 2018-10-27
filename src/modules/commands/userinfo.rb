@@ -6,7 +6,10 @@ module Bot::DiscordCommands
     command :userinfo, description: 'Shows basic user information', usage: 'userinfo <user or ID>' do |event, uid|
       mentioned = event.user
       if event.message.mentions.empty? && !uid.nil?
-        mentioned = BOT.user(uid.to_i).on(event.server)
+        mentioned = BOT.user(uid.to_i)
+        return 'User ID lookup failed.' if mentioned.nil?
+
+        mentioned = mentioned.on(event.server)
       elsif !event.message.mentions.empty?
         mentioned = event.message.mentions.first.on(event.server)
       end
@@ -14,7 +17,7 @@ module Bot::DiscordCommands
       event << "Joined on #{mentioned.joined_at}"
       roles = ''
       mentioned.roles.each do |x|
-        roles = x.name + ', '
+        roles = x.name + ' '
       end
       event << "Member of #{roles}"
       event << 'User is the server owner' if mentioned.owner?

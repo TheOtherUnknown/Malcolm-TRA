@@ -4,6 +4,7 @@ module Bot::DiscordCommands
     extend Discordrb::Commands::CommandContainer
     command(:quit, help_available: false) do |event|
       break unless event.user.id == configatron.owner
+
       exit
     end
   end

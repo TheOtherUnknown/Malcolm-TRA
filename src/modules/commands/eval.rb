@@ -6,6 +6,7 @@ module Bot::DiscordCommands
     extend Discordrb::Commands::CommandContainer
     command(:eval, help_available: false) do |event, *code|
       break unless event.user.id == configatron.owner
+
       begin
         eval code.join(' ')
       rescue StandardError => e
