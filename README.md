@@ -1,4 +1,5 @@
 # Malcolm
+[![Build Status](https://travis-ci.com/TheOtherUnknown/Malcolm-TRA.svg?branch=master)](https://travis-ci.com/TheOtherUnknown/Malcolm-TRA)
 
 This is a Discord bot build specifically for The Ranger's Apprentice server using meew0's [discordrb](https://github.com/meew0/discordrb).
 
@@ -8,7 +9,7 @@ The original gemstone template can be found on [GitHub](https://github.com/z64/g
 This bot may not work for other servers. However, here are the install directions:
 1. Clone or download this repo
 2. `gem install bundler` and `gem install rake` unless you already have them
-3. `rake install` to install deps 
+3. `bundle install` to install deps 
 
 Follow steps in the next section to configure your bot and do a first-time run.
 
