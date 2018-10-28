@@ -13,15 +13,17 @@ module Bot::DiscordCommands
       elsif !event.message.mentions.empty?
         mentioned = event.message.mentions.first.on(event.server)
       end
-      event << "**#{mentioned.name}**"
-      event << "Joined on #{mentioned.joined_at}"
+      nick = "**#{mentioned.name}##{mentioned.discrim}**"
+      nick += '👑' if mentioned.owner? # Add crown after nick if owner
+      nick += '🛡️' if mentioned.permission?(:kick_members) # Add shield after nick if user can kick
+      nick += '🤖' if mentioned.current_bot? # Add robot to nick if bot
+      event << nick
+      event << mentioned.joined_at.strftime('Joined on %B %-m, %Y at %l:%M %p UTC ') + "(#{((Time.now - event.user.on(event.server).joined_at) / 86_400).to_i} days ago)"
       roles = ''
       mentioned.roles.each do |x|
         roles = x.name + ' '
       end
       event << "Member of #{roles}"
-      event << 'User is the server owner' if mentioned.owner?
-      event << 'This user is a bot' if mentioned.current_bot?
       event << "User ID: #{mentioned.id}"
     end
   end
