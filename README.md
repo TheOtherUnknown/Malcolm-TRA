@@ -6,8 +6,9 @@ This is a Discord bot build specifically for The Ranger's Apprentice server usin
 The original gemstone template can be found on [GitHub](https://github.com/z64/gemstone).
 ## Setup
 
-This bot may not work for other servers. However, here are the install directions:
-1. Clone or download this repo
+This bot has not been extensively tested outside of the Ranger's Apprentice server. If odd behaviour occurs, please report it.
+0. Have or install a ruby version >= 2.4.0
+1. Clone this repo
 2. `gem install bundler` and `gem install rake` unless you already have them
 3. `bundle install` to install deps 
 
@@ -20,7 +21,7 @@ Make a copy of `example.config.rb` and rename it to `config.rb` *exactly*.
 Fill out each field provided to set up a Malcolm's configuration. The gaming field is optional.
 
 To run your bot, open your terminal and run `rake` in the top level folder of your bot. You're free to make something like a bash script, or Windows batch file that will do this for you at the click of an icon. You can also do other things before running your bot this way.
-
+[Development server](https://discord.gg/fCr9U29)
 ## Adding commands and events
 
 Following `discordrb`'s [documentation](http://www.rubydoc.info/gems/discordrb), adding new commands and events is "easy"
