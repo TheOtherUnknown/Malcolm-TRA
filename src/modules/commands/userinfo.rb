@@ -13,7 +13,7 @@ module Bot::DiscordCommands
       elsif !event.message.mentions.empty?
         mentioned = event.message.mentions.first.on(event.server)
       end
-      #Escape markdown in usernames
+      # Escape markdown in usernames
       nick = "**#{mentioned.name.gsub(/[_*~]/, '_' => '\_', '*' => '\*', '~' => '\~')}##{mentioned.discrim}**"
       nick += '👑' if mentioned.owner? # Add crown after nick if owner
       nick += '🛡️' if mentioned.permission?(:kick_members) # Add shield after nick if user can kick
