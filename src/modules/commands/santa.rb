@@ -6,28 +6,43 @@ module Bot::DiscordCommands
   module SecretSanta
     extend Discordrb::Commands::CommandContainer
     command :santa do |event|
-      break unless event.channel.type.zero?
+      break unless event.channel.type == 1
 
-      db = SQLite3::Database.new 'santa.sqlite3'
+      db = SQLite3::Database.new 'data/santa.sqlite3'
       event << 'Welcome to Secret Santa registration for the Ranger\'s Apprentice!'
       event << 'What would you like for Christmas? Think of a few Ranger\'s Apprentice themed gift ideas deliverable online.'
       event << 'When you\'re ready, send one message detailing your prefrences. I\'ll wait until you\'re ready. Or, say Quit.'
-      event.user.await(:pref) do |pref_event|
-        return 'Exiting...' if pref_event.message.content.casecmp('quit').zero?
+      userd = [(event.user.name + event.user.discrim).to_s, event.user.id.to_s]
+      event.user.await(:info) do |info_event|
+        return 'Exiting...' if info_event.message.content.casecmp('quit').zero?
 
-        userd = [event.user.name + event.user.discrim, event.user.id, pref.message.content]
-        event << 'Great! Is gift delivery by Discord PM okay? (Please respond `Yes`, or with your prefered delivery method)'
-        event << 'IRL methods such as mail are not allowed. Email is not recomended.'
-        event.user.await(:deliv) do |deliv_event|
-          if deliv_event.message.content.casecmp('yes').zero?
-            userd.insert(-1, true)
+        case userd.length
+        when 2
+          userd.insert(-1, info_event.message.content)
+          info_event.respond('Great! What else would you like to tell your gift giver about you?')
+          info_event.respond('This may include general biographical information.')
+          false
+        when 3
+          userd.insert(-1, info_event.message.content)
+          info_event.respond('Alright, here\'s what we have to far:')
+          info_event.respond("Username: **#{userd[0]}** (ID: #{userd[1]})")
+          info_event.respond('Gift prefrences:')
+          info_event.respond(userd[2])
+          info_event.respond('Other info:')
+          info_event.respond(userd[3])
+          info_event.respond('If everything looks okay, say `Submit` to finish or anything else to quit.')
+        when 4
+          return 'Exiting...' unless info_event.message.content.casecmp?('submit')
+
+          begin
+            db.execute('INSERT INTO users (username, uid, pref, other)
+              VALUES(?, ?, ?, ?)', userd)
+          rescue SQLite3::Exception => e
+            info_event.respond("Write to database failed! (Error code #{e.code})")
           else
-            userd.insert(-1, deliv_event.message.content)
+            info_event.respond('Registraton succesful! You will recieve your match soon.')
           end
-          db.execute('INSERT INTO users (username, uid, pref, deliv)
-          VALUES(?, ?, ?, ?)', userd)
         end
-        # Confirm action here
       end
     end
   end
