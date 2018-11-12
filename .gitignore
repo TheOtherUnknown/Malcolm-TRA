@@ -3,7 +3,6 @@
 /Gemfile.lock
 /run.sh
 /data/config.rb
-/data/santa.sqlite
 
 *.gem
 *.rbc
@@ -56,3 +55,4 @@ build-iPhoneSimulator/
 
 # unless supporting rvm < 1.11.0 or doing something fancy, ignore this:
 .rvmrc
+data/santa.sqlite3
