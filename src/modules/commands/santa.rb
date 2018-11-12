@@ -14,38 +14,42 @@ module Bot::DiscordCommands
       sleep 3
       event << 'When you\'re ready, send one message detailing your prefrences. I\'ll wait until you\'re ready. Or, say Quit.'
       userd = [(event.user.name + event.user.discrim).to_s, event.user.id.to_s]
-      event.user.await(:info) do |info_event|
-        return 'Exiting...' if info_event.message.content.casecmp('quit').zero?
-
-        case userd.length
-        when 2
-          userd.insert(-1, info_event.message.content)
-          info_event.respond('Great! What else would you like to tell your gift giver about you?')
-          info_event.respond('This may include general biographical information.')
-          false
-        when 3
-          userd.insert(-1, info_event.message.content)
-          info_event.respond('Alright, here\'s what we have so far:')
-          sleep 3
-          info_event.respond("Username: **#{userd[0]}** (ID: #{userd[1]})")
-          info_event.respond('Gift prefrences:')
-          info_event.respond(userd[2])
-          sleep 3
-          info_event.respond('Other info:')
-          info_event.respond(userd[3])
-          sleep 3
-          info_event.respond('If everything looks okay, say `Submit` to finish or anything else to quit.')
-          false
-        when 4
-          return 'Exiting...' unless info_event.message.content.casecmp?('submit')
-
-          begin
-            db.execute("INSERT INTO users(username, uid, pref, other)
-              VALUES(?, ?, ?, ?)", userd[0], userd[1], userd[2], userd[3])
-          rescue SQLite3::Exception => e
-            info_event.respond("```#{e}```")
+      event.channel.await(:info) do |info_event|
+        unless info_event.message.content.casecmp('quit').zero?
+          case userd.length
+          when 2
+            userd.insert(-1, info_event.message.content)
+            info_event.respond('Great! What else would you like to tell your gift giver about you?')
+            info_event.respond('This may include general biographical information.')
+            false
+          when 3
+            userd.insert(-1, info_event.message.content)
+            info_event.respond('Alright, here\'s what we have so far:')
+            sleep 3
+            info_event.respond("Username: **#{userd[0]}** (ID: #{userd[1]})")
+            info_event.respond('Gift prefrences:')
+            info_event.respond(userd[2])
+            sleep 3
+            info_event.respond('Other info:')
+            info_event.respond(userd[3])
+            sleep 3
+            info_event.respond('If everything looks okay, say `Submit` to finish or anything else to quit.')
+            false
+          when 4
+            if info_event.message.content.casecmp?('submit')
+              begin
+                db.execute("INSERT INTO users(username, uid, pref, other)
+                  VALUES(?, ?, ?, ?)", userd[0], userd[1], userd[2], userd[3])
+              rescue SQLite3::Exception => e
+                info_event.respond("```#{e}```")
+              else
+                info_event.respond('Registraton succesful! You will recieve your match soon.')
+              end
+            else
+              true
+            end
           else
-            info_event.respond('Registraton succesful! You will recieve your match soon.')
+            true
           end
         end
       end
