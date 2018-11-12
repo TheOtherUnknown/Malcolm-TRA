@@ -3,6 +3,7 @@
 /Gemfile.lock
 /run.sh
 /data/config.rb
+/data/santa.sqlite
 
 *.gem
 *.rbc
