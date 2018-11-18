@@ -62,7 +62,6 @@ module Bot::DiscordCommands
     command :raindeer do |event|
       break unless event.user.id == configatron.owner
 
-      db.close
       total_users = db.query('SELECT COUNT(*) FROM users')
       if total_users.even?
         # Run match
@@ -70,6 +69,7 @@ module Bot::DiscordCommands
         FileUtils.chmod(0o444, 'data/backup_santa.sqlite3')
         db.results_as_hash = true
         event << 'Let\'s get started!'
+        db.close
         db.execute('SELECT * FROM users') do |row|
           # Send match messages
           event << "Match for #{row[:username]} ?"
