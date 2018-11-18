@@ -9,6 +9,9 @@ module Bot::DiscordCommands
     command :santa do |event|
       break unless event.channel.type == 1
 
+      # Prepare the SQL insert statement for later, prevents SQL injection?
+      ins_sql = db.prepare("INSERT INTO users(username, uid, pref, other)
+                  VALUES(?, ?, ?, ?)")
       event << 'Welcome to Secret Santa registration for the Ranger\'s Apprentice!'
       event << 'What would you like for Christmas? Think of a few Ranger\'s Apprentice themed gift ideas deliverable online.'
       sleep 3
@@ -38,8 +41,10 @@ module Bot::DiscordCommands
           when 4
             if info_event.message.content.casecmp?('submit')
               begin
-                db.execute("INSERT INTO users(username, uid, pref, other)
-                  VALUES(?, ?, ?, ?)", userd[0], userd[1], userd[2], userd[3])
+                ins_sql.execute(userd[0], userd[1], userd[2], userd[3])
+              # This probably means the user is already registered, do update
+              rescue SQLite3::ConstraintException
+                db.prepare('UPDATE users SET pref=?, other=? WHERE uid=?').execute(userd[2], userd[3], userd[1])
               rescue SQLite3::Exception => e
                 info_event.respond("```#{e}```")
               else
@@ -64,8 +69,10 @@ module Bot::DiscordCommands
         FileUtils.cp('data/santa.sqlite3', 'data/backup_santa.sqlite3')
         FileUtils.chmod(0o444, 'data/backup_santa.sqlite3')
         db.results_as_hash = true
+        event << 'Let\'s get started!'
         db.execute('SELECT * FROM users') do |row|
           # Send match messages
+          event << "Match for #{row[:username]} ?"
         end
       else
         'What are the odds? The registration pool sure is! Please register yourself to make it even.'
