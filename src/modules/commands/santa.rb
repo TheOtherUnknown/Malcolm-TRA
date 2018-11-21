@@ -5,6 +5,7 @@ module Bot::DiscordCommands
   # Registration and admin for secret santa bot - Requires additional gems and config
   module SecretSanta
     extend Discordrb::Commands::CommandContainer
+    include Bot
     db = SQLite3::Database.new 'data/santa.sqlite3'
     command :santa do |event|
       break unless event.channel.type == 1
@@ -16,7 +17,7 @@ module Bot::DiscordCommands
       event << 'What would you like for Christmas? Think of a few Ranger\'s Apprentice themed gift ideas deliverable online.'
       sleep 3
       event << 'When you\'re ready, send one message detailing your prefrences. I\'ll wait until you\'re ready. Or, say Quit.'
-      userd = [(event.user.name + event.user.discrim).to_s, event.user.id.to_s]
+      userd = [(event.user.name + '#' + event.user.discrim).to_s, event.user.id.to_s]
       event.channel.await(:info) do |info_event|
         unless info_event.message.content.casecmp('quit').zero?
           case userd.length
@@ -63,16 +64,23 @@ module Bot::DiscordCommands
       break unless event.user.id == configatron.owner
 
       total_users = db.query('SELECT COUNT(*) FROM users')
-      if total_users.even?
+      if total_users.next[0].even?
         # Run match
-        FileUtils.cp('data/santa.sqlite3', 'data/backup_santa.sqlite3')
-        FileUtils.chmod(0o444, 'data/backup_santa.sqlite3')
-        db.results_as_hash = true
+        FileUtils.chmod(0o444, 'data/santa.sqlite3')
         event << 'Let\'s get started!'
-        db.close
-        db.execute('SELECT * FROM users') do |row|
-          # Send match messages
-          event << "Match for #{row[:username]} ?"
+        db.results_as_hash = true
+        ALL = db.query('SELECT * FROM users')
+        ALL.each do |current|
+          next if current['matched'] != 0
+
+          ins_m = db.prepare("UPDATE users SET matched=? WHERE rid=#{current['rid']}")
+          event << "Enter a match for #{current['username']} (#{current['uid']}) :"
+          event << "Wants: #{current['pref']}"
+          event.channel.await(:match) do |match_e|
+            match = db.query('SELECT * FROM users WHERE rid=?', match_e.message.content.to_i)
+            BOT.user(current['uid'].to_i).pm("Your match has arrived! \n Username: #{match['username'].gsub(/[_*~]/, '_' => '\_', '*' => '\*', '~' => '\~')} ")
+            ins_m.execute(match['uid'])
+          end
         end
       else
         'What are the odds? The registration pool sure is! Please register yourself to make it even.'
