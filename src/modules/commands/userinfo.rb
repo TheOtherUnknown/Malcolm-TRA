@@ -19,7 +19,7 @@ module Bot::DiscordCommands
       nick += '🛡️' if mentioned.permission?(:kick_members) # Add shield after nick if user can kick
       nick += '🤖' if mentioned.current_bot? # Add robot to nick if bot
       event << nick
-      event << mentioned.joined_at.strftime('Joined on %B %-m, %Y at %l:%M %p UTC ') + "(#{((Time.now - mentioned.joined_at) / 86_400).to_i} days ago)"
+      event << mentioned.joined_at.strftime('Joined on %B %e, %Y at %l:%M %p UTC ') + "(#{((Time.now - mentioned.joined_at) / 86_400).to_i} days ago)"
       roles = "`@\u200Beveryone`"
       unless mentioned.roles.empty?
         roles = ''
