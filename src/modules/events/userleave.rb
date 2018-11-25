@@ -6,7 +6,7 @@ module Bot::DiscordEvents
       event.server.text_channels[0].send("\u200B#{event.user.name}\##{event.user.discrim} has been banned.")
     end
     member_leave do |event|
-      event.server.text_channels[0].send_temporary_message("\u200B#{event.user.name}\##{event.user.discrim} has left the server.", 90)
+      event.server.text_channels[0].send("\u200B#{event.user.name}\##{event.user.discrim} has left the server.")
     end
   end
 end
