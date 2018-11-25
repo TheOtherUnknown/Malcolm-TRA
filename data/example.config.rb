@@ -3,3 +3,4 @@ configatron.token = '' #The bot's token
 configatron.client_id =  #The bot's client ID
 configatron.game = '' #Now playing content
 configatron.owner = #The bot owner's user ID
+configatron.santa = false # Is secret santa registration open?
