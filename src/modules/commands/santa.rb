@@ -71,20 +71,24 @@ module Bot::DiscordCommands
       total_users = db.query('SELECT COUNT(*) FROM users')
       if total_users.next[0].even?
         # Run match
-        FileUtils.chmod(0o444, 'data/santa.sqlite3')
         event << 'Let\'s get started!'
         db.results_as_hash = true
         ALL = db.query('SELECT * FROM users')
         ALL.each do |current|
-          next if current['matched'] != 0
+          # next if current['matched'] != 0
 
-          ins_m = db.prepare("UPDATE users SET matched=? WHERE rid=#{current['rid']}")
+          ins_m = db.prepare('UPDATE users SET matched=? WHERE rid=?')
           event << "Enter a match for #{current['username']} (#{current['uid']}) :"
           event << "Wants: #{current['pref']}"
           event.channel.await(:match) do |match_e|
-            match = db.query('SELECT * FROM users WHERE rid=?', match_e.message.content.to_i)
-            BOT.user(current['uid'].to_i).pm("Your match has arrived! \n Username: #{match['username'].gsub(/[_*~]/, '_' => '\_', '*' => '\*', '~' => '\~')} ")
-            ins_m.execute(match['uid'])
+            if match_e.message.content.to_i.positive?
+              match = db.query('SELECT * FROM users WHERE rid=?', match_e.message.content.to_i).next
+              BOT.user(current['uid'].to_i).pm("**TEST 1** Your match has arrived! \n Username: #{match['username'].gsub(/[_*~]/, '_' => '\_', '*' => '\*', '~' => '\~')} ")
+              puts "PM sent to #{current['username']} " # Debug, remove later
+              ins_m.execute(match['uid'], current['rid'])
+            else
+              false
+            end
           end
         end
       else
