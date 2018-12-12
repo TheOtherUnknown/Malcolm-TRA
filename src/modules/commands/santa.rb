@@ -36,10 +36,9 @@ module Bot::DiscordCommands
             sleep 3
             info_event.respond("Username: **#{userd[0]}** (ID: #{userd[1]})")
             info_event.respond('Gift prefrences:')
-            info_event.respond(userd[2])
+            info_event.respond("#{userd[2]} \nOther info:")
             sleep 3
-            info_event.respond('Other info:')
-            info_event.respond(userd[3])
+            info_event.respond("#{userd[3]} \nGiving preferences:\n#{userd[4]}")
             sleep 3
             info_event.respond('If everything looks okay, say `Submit` to finish or anything else to quit. Please remember that ghosting the event will result in a ban.')
             false
@@ -75,14 +74,14 @@ module Bot::DiscordCommands
         db.results_as_hash = true
         ALL = db.query('SELECT * FROM users')
         ALL.each do |current|
-          # next if current['matched'] != 0
+          next if current['matched'].to_i != 0
 
           ins_m = db.prepare('UPDATE users SET matched=? WHERE rid=?')
           event.respond("Enter a match for #{current['username']} (#{current['uid']}) :")
           event.respond("Wants: #{current['pref']}")
           match_e = event.channel.await!
           match = db.query('SELECT * FROM users WHERE rid=?', match_e.message.content.to_i).next
-          BOT.user(current['uid'].to_i).pm("Your match has arrived! \n Username: #{match['username'].gsub(/[_*~]/, '_' => '\_', '*' => '\*', '~' => '\~')} \n Gift preferences: #{match['pref']} \n Other information: #{match['other']} ")
+          BOT.user(current['uid'].to_i).pm("Your match has arrived! \nUsername: #{match['username'].gsub(/[_*~]/, '_' => '\_', '*' => '\*', '~' => '\~')} \nGift preferences: #{match['pref']} \nOther information: #{match['other']} ")
           puts "PM sent to #{current['username']} " # Debug, remove later
           ins_m.execute(match['uid'], current['rid'])
         end
