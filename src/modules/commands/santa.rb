@@ -71,26 +71,22 @@ module Bot::DiscordCommands
       total_users = db.query('SELECT COUNT(*) FROM users')
       if total_users.next[0].even?
         # Run match
-        event << 'Let\'s get started!'
+        event.respond('Let\'s get started!')
         db.results_as_hash = true
         ALL = db.query('SELECT * FROM users')
         ALL.each do |current|
           # next if current['matched'] != 0
 
           ins_m = db.prepare('UPDATE users SET matched=? WHERE rid=?')
-          event << "Enter a match for #{current['username']} (#{current['uid']}) :"
-          event << "Wants: #{current['pref']}"
-          event.channel.await(:match) do |match_e|
-            if match_e.message.content.to_i.positive?
-              match = db.query('SELECT * FROM users WHERE rid=?', match_e.message.content.to_i).next
-              BOT.user(current['uid'].to_i).pm("**TEST 1** Your match has arrived! \n Username: #{match['username'].gsub(/[_*~]/, '_' => '\_', '*' => '\*', '~' => '\~')} ")
-              puts "PM sent to #{current['username']} " # Debug, remove later
-              ins_m.execute(match['uid'], current['rid'])
-            else
-              false
-            end
-          end
+          event.respond("Enter a match for #{current['username']} (#{current['uid']}) :")
+          event.respond("Wants: #{current['pref']}")
+          match_e = event.channel.await!
+          match = db.query('SELECT * FROM users WHERE rid=?', match_e.message.content.to_i).next
+          BOT.user(current['uid'].to_i).pm("Your match has arrived! \n Username: #{match['username'].gsub(/[_*~]/, '_' => '\_', '*' => '\*', '~' => '\~')} \n Gift preferences: #{match['pref']} \n Other information: #{match['other']} ")
+          puts "PM sent to #{current['username']} " # Debug, remove later
+          ins_m.execute(match['uid'], current['rid'])
         end
+        event.respond('That\'s everyone! Merry Christmas to all!')
       else
         'What are the odds? The registration pool sure is! Please register yourself to make it even.'
       end
