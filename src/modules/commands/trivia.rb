@@ -7,18 +7,25 @@ module Bot::DiscordCommands
     db.results_as_hash = true
     command :trivia, min_args: 1 do |event, action|
       # Start a new game
-      answer = ''
       if action == 'start'
-        event.respond('Starting trivia. 5 questions, incoming!')
+        players = {} # Hash of all players. USERID => score
+        players.default = 0
+        event.respond('Starting trivia. The first to 5 points wins!')
         while answer != 'stop'
-          ques = db.query("SELECT question, answer FROM trivia WHERE id=#{rand(5)}") # TODO: make that >5
-          event.respond(ques['question'])
-          answer = event.channel.await!.content
-          if answer == ques['answer']
+          # Get a random question from the DB and store it in a Hash
+          ques = db.query('SELECT question, answer FROM trivia WHERE id=?', 1 + rand(db.query('SELECT Count(*) FROM trivia').next[0])).next
+          event.respond(ques['question']) # Ask the question
+          answer = event.channel.await!
+          if answer.content == ques['answer'] # You guessed right!
             event.respond('You got it!')
-          else
+            players[answer.user.id] += 1
+          else # You guessed wrong!
             event.respond('Nope! Moving on...')
           end
+          next unless players.value?(5) # Rubocop insists on this instead of using if. Who knows why. Does someone have a score of 5?
+          event.respond('And that\'s the game!')
+          event.respond("#{event.server.id(players.key(5))} wins the game!")
+          answer = 'stop' # Kill the loop
         end
       # Add a new question
       elsif action == 'add' && event.user.id == configatron.owner
