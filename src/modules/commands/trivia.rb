@@ -11,7 +11,7 @@ module Bot::DiscordCommands
       if action == 'start'
         players = {} # Hash of all players. USERID => score
         players.default = 0
-        answer = ''
+        answer = event.message # Must be a message to start off with. Content only used in the loop
         event.respond('Starting trivia. The first to 5 points wins!')
         while answer.content != 'stop'
           # Get a random question from the DB and store it in a Hash
@@ -22,6 +22,8 @@ module Bot::DiscordCommands
             event.respond('You got it!')
             sleep 3
             players[answer.user.id] += 1
+          elsif answer.content == 'stop'
+            event.respond('Exiting...')
           else # You guessed wrong!
             event.respond('Nope! Moving on...')
             sleep 3
