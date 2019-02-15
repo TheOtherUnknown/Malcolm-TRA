@@ -2,6 +2,7 @@ require 'sqlite3'
 module Bot::DiscordCommands
   # A trivia game module which pulls questions from data/trivia.db
   module Trivia
+    include Bot
     extend Discordrb::Commands::CommandContainer
     db = SQLite3::Database.new 'data/trivia.db'
     db.results_as_hash = true
@@ -10,6 +11,7 @@ module Bot::DiscordCommands
       if action == 'start'
         players = {} # Hash of all players. USERID => score
         players.default = 0
+        answer = ''
         event.respond('Starting trivia. The first to 5 points wins!')
         while answer != 'stop'
           # Get a random question from the DB and store it in a Hash
@@ -18,17 +20,20 @@ module Bot::DiscordCommands
           answer = event.channel.await!
           if answer.content == ques['answer'] # You guessed right!
             event.respond('You got it!')
+            sleep 3
             players[answer.user.id] += 1
           else # You guessed wrong!
             event.respond('Nope! Moving on...')
+            sleep 3
           end
           next unless players.value?(5) # Rubocop insists on this instead of using if. Who knows why. Does someone have a score of 5?
           event.respond('And that\'s the game!')
-          event.respond("#{event.server.id(players.key(5))} wins the game!")
+          sleep 3
+          event.respond("#{BOT.user(players.key(5)).name} wins!")
           answer = 'stop' # Kill the loop
         end
       # Add a new question
-      elsif action == 'add' && event.user.id == configatron.owner
+      elsif action == 'add' # && event.user.id == configatron.owner
         event.respond('Enter a new question: ')
         ques = event.user.await!.content
         event.respond('Enter the answer: ')
