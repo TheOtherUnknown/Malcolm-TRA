@@ -13,7 +13,7 @@ module Bot::DiscordCommands
         players.default = 0
         answer = ''
         event.respond('Starting trivia. The first to 5 points wins!')
-        while answer != 'stop'
+        while answer.content != 'stop'
           # Get a random question from the DB and store it in a Hash
           ques = db.query('SELECT question, answer FROM trivia WHERE id=?', 1 + rand(db.query('SELECT Count(*) FROM trivia').next[0])).next
           event.respond(ques['question']) # Ask the question
