@@ -6,7 +6,7 @@ module Bot::DiscordCommands
     extend Discordrb::Commands::CommandContainer
     db = SQLite3::Database.new 'data/trivia.db'
     db.results_as_hash = true
-    command :trivia, min_args: 1 do |event, action|
+    command :trivia, min_args: 1, description: 'Trivia game management tool', usage: 'trivia start || add' do |event, action|
       # Start a new game
       if action == 'start'
         players = {} # Hash of all players. USERID => score
@@ -18,11 +18,11 @@ module Bot::DiscordCommands
           ques = db.query('SELECT question, answer FROM trivia WHERE id=?', 1 + rand(db.query('SELECT Count(*) FROM trivia').next[0])).next
           event.respond(ques['question']) # Ask the question
           answer = event.channel.await!
-          if answer.content == ques['answer'] # You guessed right!
+          if answer.content.casecmp?(ques['answer']) # You guessed right!
             event.respond('You got it!')
             sleep 3
             players[answer.user.id] += 1
-          elsif answer.content == 'stop'
+          elsif answer.content.casecmp?('stop')
             event.respond('Exiting...')
           else # You guessed wrong!
             event.respond('Nope! Moving on...')
