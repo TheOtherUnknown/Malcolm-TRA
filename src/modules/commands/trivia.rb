@@ -17,8 +17,19 @@ module Bot::DiscordCommands
           # Get a random question from the DB and store it in a Hash
           ques = db.query('SELECT question, answer FROM trivia WHERE id=?', 1 + rand(db.query('SELECT Count(*) FROM trivia').next[0])).next
           event.respond(ques['question']) # Ask the question
-          answer = event.channel.await!
-          if answer.content.casecmp?(ques['answer']) # You guessed right!
+          answer = event.channel.await!(timeout: 30)
+          case answer.content
+            when ! answer
+            break
+            when answer.content.casecmp?(ques['answer'])
+            event.respond('You got it!')
+            sleep 3
+            players[answer.user.id] += 1
+          else
+            event.respond('Nope! Moving on...')
+            sleep 3
+          end
+=begin    if answer.content.casecmp?(ques['answer']) # You guessed right!
             event.respond('You got it!')
             sleep 3
             players[answer.user.id] += 1
@@ -28,6 +39,7 @@ module Bot::DiscordCommands
             event.respond('Nope! Moving on...')
             sleep 3
           end
+=end
           next unless players.value?(5) # Rubocop insists on this instead of using if. Who knows why. Does someone have a score of 5?
           event.respond('And that\'s the game!')
           sleep 3
