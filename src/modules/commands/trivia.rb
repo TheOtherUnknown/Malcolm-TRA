@@ -17,13 +17,14 @@ module Bot::DiscordCommands
           # Get a random question from the DB and store it in a Hash
           ques = db.query('SELECT question, answer FROM trivia WHERE id=?', 1 + rand(db.query('SELECT Count(*) FROM trivia').next[0])).next
           event.respond(ques['question']) # Ask the question
-          answer = event.channel.await!(timeout: 30)
+          answer = event.channel.await!(timeout: 60)
           if answer # Was there an answer before the timeout?
-            if answer.content.casecmp?(ques['answer']) # There was an answer! You guessed right!
+            cleanans = answer.content.gsub(/\W/, '').downcase # Clean up the answer by removing caps and non [a-z] [0-9] chars
+            if cleanans == ques['answer'] # There was an answer! You guessed right!
               event.respond('You got it!')
               sleep 3
               players[answer.user.id] += 1
-            elsif answer.content.casecmp?('stop') # There was an answer! It was stop
+            elsif cleanans == 'stop' # There was an answer! It was stop
               event.respond('Exiting...')
               break
             else # There was an answer! It was wrong!
@@ -45,7 +46,7 @@ module Bot::DiscordCommands
         event.respond('Enter a new question: ')
         ques = event.user.await!.content
         event.respond('Enter the answer: ')
-        ans = event.user.await!.content
+        ans = event.user.await!.content.gsub(/\W/, '').downcase # Clean up the answer by removing caps and non [a-z] [0-9] chars
         event.respond('Commit to database? (y/n): ')
         if event.user.await!.content == 'y'
           begin
