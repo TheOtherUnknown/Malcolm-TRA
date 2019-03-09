@@ -50,7 +50,7 @@ module Bot::DiscordCommands
         event.respond('Commit to database? (y/n): ')
         if event.user.await!.content == 'y'
           begin
-            db.prepare('INSERT INTO trivia(question, answer) VALUES(?, ?)').execute(ques, ans)
+            db.prepare('INSERT INTO trivia(question, answer, addedby) VALUES(?, ?, ?)').execute(ques, ans, event.user.id)
           rescue SQLite3::Exception
             event.respond('Unable to write to database!')
           else
