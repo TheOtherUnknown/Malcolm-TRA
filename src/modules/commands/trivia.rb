@@ -15,7 +15,12 @@ module Bot::DiscordCommands
         event.respond('Starting trivia. The first to 5 points wins!')
         loop do
           # Get a random question from the DB and store it in a Hash
-          ques = db.query('SELECT question, answer FROM trivia WHERE id=?', 1 + rand(db.query('SELECT Count(*) FROM trivia').next[0])).next
+          begin
+            ques = db.query('SELECT question, answer FROM trivia WHERE id=?', 1 + rand(db.query('SELECT Count(*) FROM trivia').next[0])).next
+          rescue SQLite3::Exception
+            event.respond('Unable to query database!')
+            break
+          end
           event.respond(ques['question']) # Ask the question
           answer = event.channel.await!(timeout: 60)
           if answer # Was there an answer before the timeout?
@@ -36,6 +41,7 @@ module Bot::DiscordCommands
             break
           end
           next unless players.value?(5) # Rubocop insists on this instead of using if. Who knows why. Does someone have a score of 5?
+
           event.respond('And that\'s the game!')
           sleep 3
           event.respond("#{BOT.user(players.key(5)).name} wins!")

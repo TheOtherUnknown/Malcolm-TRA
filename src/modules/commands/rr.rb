@@ -2,7 +2,7 @@ module Bot::DiscordCommands
   # A Russian roulette style game that might just get you kicked
   module RussianRoulette
     extend Discordrb::Commands::CommandContainer
-    dead = {}
+    dead = {} # Contains game losers. USERID -> Time of loss
     dead.default = 86_400
     command :rr, description: 'A simple game of daring. Danger! Danger Will Robinson!', usage: 'rr' do |event|
       if (defined? @gun).nil? || @gun.empty?
@@ -13,7 +13,6 @@ module Bot::DiscordCommands
       if (Time.now - dead[event.user.id]).to_i < 86_400
         'You died! Try again tomorrow.'
       else
-        dead.key?(event.user.id) ? dead[event.user.id].delete : nil
         chamber = rand(@gun.length - 1)
         if @gun[chamber]
           begin

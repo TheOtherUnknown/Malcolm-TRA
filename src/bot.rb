@@ -13,7 +13,7 @@ module Bot
   BOT = Discordrb::Commands::CommandBot.new(client_id: configatron.client_id,
                                             token: configatron.token,
                                             prefix: ',')
-  puts 'Bot invite URL: ' + BOT.invite_url + '&permissions=67119110 '
+  puts 'Bot invite URL: ' + BOT.invite_url + '&permissions=268446726 '
   # Create ratelimiting bucket
   BOT.bucket :wait90, delay: 90
   # This class method wraps the module lazy-loading process of discordrb command
