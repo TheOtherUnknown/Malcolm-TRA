@@ -7,7 +7,7 @@ module Bot::DiscordCommands
       if event.user.permission?(:change_nickname)
         'You\'re already verified.'
       # User must be in the server at least 1 day
-      elsif (Time.now - jointime).to_i >= 86_400
+      elsif (Time.now.utc - jointime).to_i >= 86_400
         allroles = event.server.roles
         # Loop through all server roles to find role named in config.rb
         allroles.each do |a|
