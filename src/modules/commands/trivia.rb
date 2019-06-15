@@ -6,7 +6,7 @@ module Bot::DiscordCommands
     extend Discordrb::Commands::CommandContainer
     db = SQLite3::Database.new 'data/trivia.db'
     db.results_as_hash = true
-    command :trivia, min_args: 1, description: 'Trivia game management tool', usage: 'trivia start || add' do |event, action|
+    command :trivia, min_args: 1, description: 'Trivia game management tool', usage: 'trivia [add|start|top]' do |event, action|
       # Start a new game
       if action == 'start'
         players = {} # Hash of all players. USERID => score
@@ -44,7 +44,10 @@ module Bot::DiscordCommands
 
           event.respond('And that\'s the game!')
           sleep 3
-          event.respond("#{BOT.user(players.key(5)).name} wins!")
+          winner = players.key(5)
+          event.respond("#{BOT.user(winner).name} wins!")
+          db.prepare('INSERT OR IGNORE INTO score(id) VALUES(?)').execute(winner) # Add a user if they don't exist
+          db.prepare('UPDATE score SET rank = rank + 1 WHERE id = ?').execute(winner) # Add 1 to score
           break # Kill the loop
         end
       # Add a new question
@@ -63,6 +66,13 @@ module Bot::DiscordCommands
             event.respond('Changes saved')
           end
         end
+      elsif action == 'top' # Prints the top 5
+        scores = "```User:\t\t\t\t\t\tWins:"
+        db.execute('SELECT id, rank FROM score ORDER BY rank DESC LIMIT 5') do |row| # Get the top 5, add to the printed string
+          scores += "\n" + BOT.user(row['id']).name.ljust(33) + row['rank'].to_s # Usernames can be 32 chars, so ljust by 33
+        end
+        scores += '```'
+        event.respond(scores)
       end
     end
   end
