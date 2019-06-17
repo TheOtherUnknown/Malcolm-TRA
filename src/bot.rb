@@ -2,6 +2,7 @@
 require 'discordrb'
 require 'configatron'
 require_relative '../data/config.rb'
+require_relative 'modules/trivia_game.rb'
 # The main bot module.
 module Bot
   # Load non-Discordrb modules
@@ -12,7 +13,7 @@ module Bot
   # can access the cache anywhere.
   BOT = Discordrb::Commands::CommandBot.new(client_id: configatron.client_id,
                                             token: configatron.token,
-                                            prefix: ',')
+                                            prefix: ',', ignore_bots: true)
   puts 'Bot invite URL: ' + BOT.invite_url + '&permissions=268446726 '
   # Create ratelimiting bucket
   BOT.bucket :wait90, delay: 90
