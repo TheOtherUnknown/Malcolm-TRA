@@ -14,7 +14,7 @@ class TriviaGame
     @@game_channels.push(@event.channel)
   end
 
-  # Asks a new question, and checks the answer while updating scores. Calls #stop_game if the answer is stop or no one answers in time.
+  # Asks a new question, and checks the answer while updating scores. Calls #open_channel and stops if the answer is stop or no one answers in time.
   # @return nil if a game is stopped or cannot be started
   def ask_question
     begin
@@ -44,7 +44,7 @@ class TriviaGame
     end
   end
 
-  # Checks if someone has won the game. If so, updates rankings and announces the winner before calling #stop_game
+  # Checks if someone has won the game. If so, updates rankings and announces the winner before calling #open_channel
   # @param score [Integer] The score needed to win
   def winner(score)
     return unless @players.value?(score)
@@ -64,9 +64,9 @@ class TriviaGame
     @@game_channels.delete(@event.channel)
     nil
   end
-
+  # Prints the leaders from the database
   def leaders
-    scores = "```User:\t\t\t\t\t\tWins:"
+    scores = "```User:                            Wins:"
     @@trivia_db.execute('SELECT id, rank FROM score ORDER BY rank DESC LIMIT 5') do |row| # Get the top 5, add to the printed string
       scores += "\n" + Bot::BOT.user(row['id']).name.ljust(33) + row['rank'].to_s # Usernames can be 32 chars, so ljust by 33
     end
@@ -74,7 +74,7 @@ class TriviaGame
     @event.respond(scores)
     open_channel
   end
-
+  # Adds a question to the trivia database
   def add_question
     @event.respond('Enter a new question: ')
     ques = @event.user.await!(timeout: 60)
