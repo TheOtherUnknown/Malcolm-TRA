@@ -14,48 +14,53 @@ class TriviaGame
     @@game_channels.push(@event.channel)
   end
 
-  # Asks a new question, and checks the answer while updating scores. Calls #open_channel and stops if the answer is stop or no one answers in time.
-  # @return nil if a game is stopped or cannot be started
-  def ask_question
-    begin
-        ques = @@trivia_db.query('SELECT question, answer FROM trivia WHERE id=?', 1 + rand(@@trivia_db.query('SELECT Count(*) FROM trivia').next[0])).next
-    rescue SQLite3::Exception
-      @event.respond('Unable to query database!')
-      open_channel
-      end
-    @event.respond(ques['question']) # Ask the question
-    answer = @event.channel.await!(timeout: 60)
-    if answer # Was there an answer before the timeout?
-      cleanans = answer.content.gsub(/\W/, '').downcase # Clean up the answer by removing caps and non [a-z] [0-9] chars
-      if cleanans == ques['answer'] # There was an answer! You guessed right!
-        @event.respond('You got it!')
-        sleep 3
-        @players[answer.user] += 1
-      elsif cleanans == 'stop' # There was an answer! It was stop
-        @event.respond('Exiting...')
+  # Asks new questions, and checks the answer while updating scores. Calls #open_channel and stops if the answer is stop or no one answers in time.
+  # @param score [Integer] the score needed to win
+  # @return nil if a game is stopped or the winner of the game
+  def start(score)
+    until winner?(score)
+      begin
+          ques = @@trivia_db.query('SELECT question, answer FROM trivia WHERE id=?', 1 + rand(@@trivia_db.query('SELECT Count(*) FROM trivia').next[0])).next
+      rescue SQLite3::Exception
+        @event.respond('Unable to query database!')
         return open_channel
-      else # There was an answer! It was wrong!
-        @event.respond('Nope! Moving on...')
-        sleep 3
+        end
+      @event.respond(ques['question']) # Ask the question
+      answer = @event.channel.await!(timeout: 60)
+      if answer # Was there an answer before the timeout?
+        cleanans = answer.content.gsub(/\W/, '').downcase # Clean up the answer by removing caps and non [a-z] [0-9] chars
+        if cleanans == ques['answer'] # There was an answer! You guessed right!
+          @event.respond('You got it!')
+          sleep 3
+          @players[answer.user] += 1
+        elsif cleanans == 'stop' # There was an answer! It was stop
+          @event.respond('Exiting...')
+          return open_channel
+        else # There was an answer! It was wrong!
+          @event.respond('Nope! Moving on...')
+          sleep 3
+        end
+      else # No answer
+        event.respond('Well, alright then. Exiting...')
+        return open_channel
       end
-    else # No answer
-      event.respond('Well, alright then. Exiting...')
-      return open_channel
     end
   end
 
   # Checks if someone has won the game. If so, updates rankings and announces the winner before calling #open_channel
   # @param score [Integer] The score needed to win
-  def winner(score)
-    return unless @players.value?(score)
+  # @return true if someone won, false if not
+  def winner?(score)
+    return false unless @players.value?(score)
 
     @event.respond('And that\'s the game!')
     sleep 3
     winner = @players.key(score)
     @event.respond("#{winner.name} wins!")
-    @@trivia_db.prepare('INSERT OR IGNORE INTO score(id) VALUES(?)').execute(winner) # Add a user if they don't exist
-    @@trivia_db.prepare('UPDATE score SET rank = rank + 1 WHERE id = ?').execute(winner) # Add 1 to score
+    @@trivia_db.prepare('INSERT OR IGNORE INTO score(id) VALUES(?)').execute(winner.id) # Add a user if they don't exist
+    @@trivia_db.prepare('UPDATE score SET rank = rank + 1 WHERE id = ?').execute(winner.id) # Add 1 to score
     open_channel
+    true
   end
 
   # Makes the channel available to another game

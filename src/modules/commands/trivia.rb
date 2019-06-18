@@ -8,8 +8,7 @@ module Bot::DiscordCommands
         # Start a new game
         if action == 'start'
           event.respond('Starting trivia. The first to 5 points wins!')
-          until game.ask_question.nil? || game.winner(5)
-          end
+          game.start(5)
         # Add a new question
         elsif action == 'add'
           game.add_question
