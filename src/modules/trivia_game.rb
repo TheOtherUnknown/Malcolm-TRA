@@ -99,9 +99,9 @@ class TriviaGame
       begin
       @@trivia_db.prepare('INSERT INTO trivia(question, answer, addedby) VALUES(?, ?, ?)').execute(ques, ans, event.user.id)
       rescue SQLite3::Exception
-        event.respond('Unable to write to database!')
+        @event.respond('Unable to write to database!')
       else
-        event.respond('Changes saved')
+        @event.respond('Changes saved')
     end
     end
     open_channel
