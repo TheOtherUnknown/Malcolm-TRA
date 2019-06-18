@@ -10,6 +10,7 @@ module Bot::DiscordCommands
         event << "Owner: #{event.server.owner.username}"
         event << "Users: #{event.server.member_count}"
         event << "Online: #{event.server.online_members.count}"
+        event << event.server.creation_time.strftime('Created on %B %e, %Y at %l:%M %p UTC ') + "(#{((Time.now - event.server.creation_time) / 86_400).to_i} days ago)"
         event << event.server.icon_url
         event << "Region: #{event.server.region}"
       end

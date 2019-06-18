@@ -49,10 +49,10 @@ class TriviaGame
   def winner(score)
     return unless @players.value?(score)
 
-    event.respond('And that\'s the game!')
+    @event.respond('And that\'s the game!')
     sleep 3
     winner = @players.key(score)
-    event.respond("#{winner.name} wins!")
+    @event.respond("#{winner.name} wins!")
     @@trivia_db.prepare('INSERT OR IGNORE INTO score(id) VALUES(?)').execute(winner) # Add a user if they don't exist
     @@trivia_db.prepare('UPDATE score SET rank = rank + 1 WHERE id = ?').execute(winner) # Add 1 to score
     open_channel
@@ -64,9 +64,10 @@ class TriviaGame
     @@game_channels.delete(@event.channel)
     nil
   end
+
   # Prints the leaders from the database
   def leaders
-    scores = "```User:                            Wins:"
+    scores = '```User:                            Wins:'
     @@trivia_db.execute('SELECT id, rank FROM score ORDER BY rank DESC LIMIT 5') do |row| # Get the top 5, add to the printed string
       scores += "\n" + Bot::BOT.user(row['id']).name.ljust(33) + row['rank'].to_s # Usernames can be 32 chars, so ljust by 33
     end
@@ -74,6 +75,7 @@ class TriviaGame
     @event.respond(scores)
     open_channel
   end
+
   # Adds a question to the trivia database
   def add_question
     @event.respond('Enter a new question: ')

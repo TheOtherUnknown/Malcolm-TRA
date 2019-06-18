@@ -7,6 +7,7 @@ module Bot::DiscordCommands
       if game.channel_free?
         # Start a new game
         if action == 'start'
+          event.respond('Starting trivia. The first to 5 points wins!')
           until game.ask_question.nil? || game.winner(5)
           end
         # Add a new question
