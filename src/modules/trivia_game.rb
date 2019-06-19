@@ -97,7 +97,7 @@ class TriviaGame
     prompt = @event.user.await!(timeout: 60)
     unless prompt.nil? || prompt.content != 'y'
       begin
-      @@trivia_db.prepare('INSERT INTO trivia(question, answer, addedby) VALUES(?, ?, ?)').execute(ques, ans, event.user.id)
+      @@trivia_db.prepare('INSERT INTO trivia(question, answer, addedby) VALUES(?, ?, ?)').execute(ques, ans, @event.user.id)
       rescue SQLite3::Exception
         @event.respond('Unable to write to database!')
       else
