@@ -41,7 +41,7 @@ class TriviaGame
           sleep 3
         end
       else # No answer
-        event.respond('Well, alright then. Exiting...')
+        @event.respond('Well, alright then. Exiting...')
         return open_channel
       end
     end
