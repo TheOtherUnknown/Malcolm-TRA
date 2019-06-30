@@ -20,13 +20,13 @@ class TriviaGame
   def start(score)
     until winner?(score)
       begin
-          ques = @@trivia_db.query('SELECT question, answer FROM trivia WHERE id=?', 1 + rand(@@trivia_db.query('SELECT Count(*) FROM trivia').next[0])).next
+          ques = @@trivia_db.get_first_row('SELECT question, answer FROM trivia WHERE id=?', 1 + rand(@@trivia_db.get_first_value('SELECT Count(*) FROM trivia')))
       rescue SQLite3::Exception
         @event.respond('Unable to query database!')
         return open_channel
       rescue NoMethodError # Crash investigation stuff
         event.respond('Database query has returned Nil in the trivia loop! This isn\'t supposed to happen. A crash report is on the way.')
-        Bot::BOT.user(configatron.owner).dm("Crash info [database]:\n #{@@trivia_db.inspect}\n Query attempt:\n #{@@trivia_db.query('SELECT question, answer FROM trivia WHERE id=?', 1 + rand(@@trivia_db.query('SELECT Count(*) FROM trivia').next[0])).next}")
+        Bot::BOT.user(configatron.owner).dm("Crash info [database]:\n #{@@trivia_db.inspect}\n Query attempt:\n #{@@trivia_db.query('SELECT question, answer FROM trivia WHERE id=?', 1 + rand(@@trivia_db.query('SELECT Count(*) FROM trivia'))).inspect}")
         return open_channel
         end
       @event.respond(ques['question']) # Ask the question
