@@ -122,7 +122,8 @@ class TriviaGame
   # @returns the nick of the user if they have one, username if not
   def name(id)
     user = Bot::BOT.user(id)
-    user.username if user.on(@event.server).nick.nil?
+    return user.username if user.on(@event.server).nick.nil?
+
     user.on(@event.server).nick
   end
 end
