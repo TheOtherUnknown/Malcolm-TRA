@@ -74,7 +74,7 @@ class TriviaGame
   def leaders
     scores = '```User:                            Wins:'
     @@trivia_db.execute('SELECT id, rank FROM score ORDER BY rank DESC LIMIT 5') do |row| # Get the top 5, add to the printed string
-      scores += "\n" + Bot::BOT.user(row['id']).name.ljust(33) + row['rank'].to_s # Usernames can be 32 chars, so ljust by 33
+      scores += "\n" + name(row['id']).ljust(33) + row['rank'].to_s # Usernames can be 32 chars, so ljust by 33
     end
     scores += '```'
     @event.respond(scores)
@@ -117,5 +117,12 @@ class TriviaGame
 
     open_channel
     false
+  end
+
+  # @returns the nick of the user if they have one, username if not
+  def name(id)
+    user = Bot::BOT.user(id)
+    user.username if user.on(@event.server).nick.nil?
+    user.on(@event.server).nick
   end
 end
