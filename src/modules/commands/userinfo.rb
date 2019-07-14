@@ -4,31 +4,31 @@ module Bot::DiscordCommands
     extend Discordrb::Commands::CommandContainer
     include Bot
     command :userinfo, description: 'Shows basic user information', usage: 'userinfo <user or ID>' do |event, uid|
-      mentioned = event.user
-      if event.message.mentions.empty? && !uid.nil?
-        mentioned = BOT.user(uid.to_i)
-        return 'User ID lookup failed.' if mentioned.nil?
+      user = event.user.on(event.server) # If all else fails, just use the user who gave the command
+      if event.message.mentions.empty? && !uid.nil? # Resolve a user ID
+        user = BOT.user(uid.to_i)
+        return 'User ID lookup failed.' if user.nil?
 
-        mentioned = mentioned.on(event.server)
-      elsif !event.message.mentions.empty?
-        mentioned = event.message.mentions.first.on(event.server)
+        user = user.on(event.server)
+      elsif !event.message.mentions.empty? # Resolve a user mention
+        user = event.message.mentions.first.on(event.server)
       end
       # Escape markdown in usernames
-      nick = "**#{mentioned.name.gsub(/[_*~]/, '_' => '\_', '*' => '\*', '~' => '\~')}##{mentioned.discrim}**"
-      nick += '👑' if mentioned.owner? # Add crown after nick if owner
-      nick += '🛡️' if mentioned.permission?(:kick_members) # Add shield after nick if user can kick
-      nick += '🤖' if mentioned.current_bot? # Add robot to nick if bot
+      nick = "**#{user.name.gsub(/[_*~]/, '_' => '\_', '*' => '\*', '~' => '\~')}##{user.discrim}**"
+      nick += '👑' if user.owner? # Add crown after nick if owner
+      nick += '🛡️' if user.permission?(:kick_members) # Add shield after nick if user can kick
+      nick += '🤖' if user.current_bot? # Add robot to nick if bot
       event << nick
-      event << mentioned.joined_at.strftime('Joined on %B %e, %Y at %l:%M %p UTC ') + "(#{((Time.now - mentioned.joined_at) / 86_400).to_i} days ago)"
+      event << user.joined_at.strftime('Joined on %B %e, %Y at %l:%M %p UTC ') + "(#{((Time.now - user.joined_at) / 86_400).to_i} days ago)"
       roles = "`@\u200Beveryone`"
-      unless mentioned.roles.empty?
+      unless user.roles.empty?
         roles = ''
-        mentioned.roles.each do |x|
-          roles += x.name + ' '
+        user.roles.each do |x|
+          roles += '`' + x.name + '` '
         end
       end
       event << "Member of #{roles}"
-      event << "User ID: #{mentioned.id}"
+      event << "User ID: #{user.id}"
     end
   end
 end
