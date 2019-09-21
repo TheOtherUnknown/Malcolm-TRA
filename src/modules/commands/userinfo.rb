@@ -19,7 +19,11 @@ module Bot::DiscordCommands
       nick += '🛡️' if user.permission?(:kick_members) # Add shield after nick if user can kick
       nick += '🤖' if user.current_bot? # Add robot to nick if bot
       event << nick
-      event << user.joined_at.strftime('Joined on %B %e, %Y at %l:%M %p UTC ') + "(#{((Time.now - user.joined_at) / 86_400).to_i} days ago)"
+      begin
+        event << user.joined_at.strftime('Joined on %B %e, %Y at %l:%M %p UTC ') + "(#{((Time.now - user.joined_at) / 86_400).to_i} days ago)"
+      rescue NoMethodError # IF we did not recieve the join event from the API, getting the date is not possible
+        event << 'Join date unknown'
+      end
       roles = "`@\u200Beveryone`"
       unless user.roles.empty?
         roles = ''
