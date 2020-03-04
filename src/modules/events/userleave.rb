@@ -3,10 +3,10 @@ module Bot::DiscordEvents
   module UserPart
     extend Discordrb::EventContainer
     user_ban do |event|
-      event.server.text_channels[0].send("\u200B#{event.user.name}\##{event.user.discrim} has been banned.")
+      event.server.text_channels[0].send("\u200B#{event.user.name.gsub(/[_*~]/, '_' => '\_', '*' => '\*', '~' => '\~')}\##{event.user.discrim} has been banned.")
     end
     member_leave do |event|
-      event.server.text_channels[0].send("\u200B#{event.user.name}\##{event.user.discrim} has left the server.")
+      event.server.text_channels[0].send("\u200B#{event.user.name.gsub(/[_*~]/, '_' => '\_', '*' => '\*', '~' => '\~')}\##{event.user.discrim} has left the server.")
     end
   end
 end
