@@ -10,7 +10,7 @@ module Bot::DiscordCommands
           event.respond('Starting trivia. The first to 5 points wins!')
           game.start(5)
         # Add a new question
-        elsif action == 'add'
+        elsif (action == 'add') && event.user.on(event.server).permission?(:manage_channels)
           game.add_question
         elsif action == 'top' # Prints the top 5
           game.leaders
