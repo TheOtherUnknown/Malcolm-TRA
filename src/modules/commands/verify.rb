@@ -13,10 +13,11 @@ module Bot::DiscordCommands
         allroles = event.server.roles
         # Loop through all server roles to find role named in config.rb
         allroles.each do |a|
-          if configatron.verified.casecmp(a.name).zero?
-            event.user.on(event.server).add_role(a)
-            break
-          end
+          next unless configatron.verified.casecmp(a.name).zero?
+
+          event.user.on(event.server).add_role(a)
+          event.message.react('✅')
+          break
         end
       else
         'You do not qualify for autoverify or it is not enabled. Check back later.'
