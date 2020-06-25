@@ -4,7 +4,7 @@ module Bot::DiscordCommands
     extend Discordrb::Commands::CommandContainer
     command(:roleadd, min_args: 1, description: 'Grants you a custom role', usage: 'roleadd <role name>') do |event, nrole|
       event.server.roles.each do |role|
-        if nrole.casecpm?(role) && role.permissions.bits.zero? # Doesthe role exist, and does it have no permissions?
+        if nrole.casecmp?(role) && role.permissions.bits.zero? # Doesthe role exist, and does it have no permissions?
           nrole = role
           break
         end
