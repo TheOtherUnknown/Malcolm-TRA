@@ -20,8 +20,13 @@ module Bot::DiscordCommands
       nick += '🤖' if user.current_bot? # Add robot to nick if bot
       event << nick
       begin
+        retryTimes ||= 0
         event << user.joined_at.strftime('Joined on %B %e, %Y at %l:%M %p UTC ') + "(#{((Time.now - user.joined_at) / 86_400).to_i} days ago)"
-      rescue NoMethodError # IF we did not recieve the join event from the API, getting the date is not possible
+      rescue NoMethodError # IF we did not recieve the join event from the API, refresh the cache once
+        if (retryTimes += 1) < 2
+          Bot::BOT.init_cache
+          retry
+        end
         event << 'Join date unknown'
       end
       roles = "`@\u200Beveryone`"

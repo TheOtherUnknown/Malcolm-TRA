@@ -4,12 +4,13 @@ module Bot::DiscordCommands
     extend Discordrb::Commands::CommandContainer
     command :verify, bucket: :wait90, description: 'Add yourself to the \"Verified\" role.', usage: 'verify' do |event|
       joindate = event.user.on(event.server).joined_at
-      if event.user.permission?(:change_nickname)
-        'You\'re already verified.'
-      elsif joindate.nil? # API problems
-        'Failed to verify, could not get join date'
+      'You\'re already verified.' if event.user.permission?(:change_nickname)
+      if joindate.nil? # API problems, refresh the cache
+        Bot::BOT.init_cache
+        joindate = event.user.on(event.server).joined_at
+      end
       # User must be in the server at least 1 day
-      elsif (Time.now.utc - joindate).to_i >= 86_400
+      if (Time.now.utc - joindate).to_i >= 86_400
         allroles = event.server.roles
         # Loop through all server roles to find role named in config.rb
         allroles.each do |a|
