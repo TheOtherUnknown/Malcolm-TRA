@@ -37,7 +37,7 @@ class TriviaGame
           @event.respond('Exiting...')
           return open_channel
         else # There was an answer! It was wrong!
-          @event.respond('Nope! Moving on...')
+          @event.respond('Nope! The correct answer was: ' + ques['answer'].capitalize)
           sleep 3
         end
       else # No answer
